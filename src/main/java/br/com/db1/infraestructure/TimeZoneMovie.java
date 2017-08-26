@@ -24,4 +24,22 @@ public interface TimeZoneMovie<F> {
         OffsetDateTime timeUtc = dateTime.atOffset(ZoneOffset.UTC);
         return timeUtc.withOffsetSameInstant(zonedDateTime.getOffset());
     }
+
+    default String getStringToLocalDateTime(ZonedDateTime newDateTime, DateTimeFormatter formatter) {
+        return newDateTime.format(formatter);
+    }
+
+    default ZonedDateTime getNewTimeZone(ZonedDateTime newTimeZoneDate, String timeZone) {
+        ZoneId newZoneId = ZoneId.of(timeZone);
+        return newTimeZoneDate.withZoneSameInstant(newZoneId);
+    }
+
+    default ZonedDateTime getDefaultTimeZone(LocalDateTime ldt) {
+        ZoneId zoneIdDefault = ZoneId.systemDefault();
+        return ldt.atZone(zoneIdDefault);
+    }
+
+    default LocalDateTime getStringToDateTime(Movie m, DateTimeFormatter formatter) {
+        return LocalDateTime.parse(m.getDateHour(), formatter);
+    }
 }

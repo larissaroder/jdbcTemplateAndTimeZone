@@ -5,7 +5,9 @@ import br.com.db1.infraestructure.TimeZoneMovie;
 import br.com.db1.model.Movie;
 import com.google.common.collect.Lists;
 
-import java.time.*;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -14,7 +16,7 @@ public class TimeZoneMovieService implements TimeZoneMovie<Movie> {
     private static final String INCORRECT_TIME_ZONE = "Time Zone Inexistente";
     private String timeZone;
 
-    private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     public TimeZoneMovieService(String timeZone) {
         this.timeZone = timeZone.trim();
@@ -31,12 +33,12 @@ public class TimeZoneMovieService implements TimeZoneMovie<Movie> {
     private List<Movie> changeTimeZone(List<Movie> movies) {
         List<Movie> moviesWithTimeZoneUpdated = Lists.newLinkedList();
         movies.forEach(m -> {
-            OffsetDateTime offsetTime = getOffsetDateTime(m.getDateHour(), FORMAT, timeZone);
-            String dateWithTimeZone = offsetTime.format(FORMAT);
-            moviesWithTimeZoneUpdated.add(new Movie(m.getId(), m.getName(), dateWithTimeZone));
+            LocalDateTime ldt = getStringToDateTime(m, FORMATTER);
+            ZonedDateTime newTimeZoneDate = getDefaultTimeZone(ldt);
+            ZonedDateTime newDateTime = getNewTimeZone(newTimeZoneDate, timeZone);
+            String newDate = getStringToLocalDateTime(newDateTime, FORMATTER);
+            moviesWithTimeZoneUpdated.add(new Movie(m.getId(), m.getName(), newDate));
         });
         return moviesWithTimeZoneUpdated;
     }
-
-
 }
